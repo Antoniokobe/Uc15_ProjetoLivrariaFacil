@@ -5,45 +5,59 @@ public class LivrariaController {
     private List<Livro> livros;
     private List<Cliente> clientes;
     private List<Venda> vendas;
+    private List<ItemDeVenda> carrinho; // Carrinho temporário
 
     public LivrariaController() {
         this.livros = new ArrayList<>();
         this.clientes = new ArrayList<>();
         this.vendas = new ArrayList<>();
+        this.carrinho = new ArrayList<>();
     }
 
-    // Simulação de cadastro de livro
+    // Métodos de cadastro
     public void cadastrarLivro(Livro livro) {
         livros.add(livro);
-        System.out.println("Livro cadastrado: " + livro.getTitulo());
     }
 
-    // Simulação de cadastro de cliente
     public void cadastrarCliente(Cliente cliente) {
         clientes.add(cliente);
-        System.out.println("Cliente cadastrado: " + cliente.getNome());
     }
 
-    // Simulação de venda
-    public boolean realizarVenda(int idLivro, int quantidade, Cliente cliente) {
-        for (Livro livro : livros) {
-            if (livro.getId() == idLivro) {
-                if (livro.getQuantidadeEstoque() >= quantidade) {
-                    double total = livro.getPrecoVenda() * quantidade;
-                    Venda venda = new Venda(vendas.size() + 1, cliente, total);
-                    vendas.add(venda);
-                    livro.setQuantidadeEstoque(livro.getQuantidadeEstoque() - quantidade);
-                    System.out.println("Venda realizada com sucesso!");
-                    System.out.println(venda);
-                    return true;
-                } else {
-                    System.out.println("Estoque insuficiente para o livro: " + livro.getTitulo());
-                    return false;
-                }
-            }
+    // Métodos para GUI
+    public List<Livro> getLivros() { return new ArrayList<>(livros); }
+    public List<Cliente> getClientes() { return new ArrayList<>(clientes); }
+    public List<Venda> getVendas() { return new ArrayList<>(vendas); }
+
+    // Carrinho de compras
+    public void adicionarAoCarrinho(Livro livro, int quantidade) {
+        if (livro.reduzirEstoque(quantidade)) {
+            carrinho.add(new ItemDeVenda(livro, quantidade));
+        } else {
+            throw new IllegalArgumentException("Estoque insuficiente para: " + livro.getTitulo());
         }
-        System.out.println("Livro não encontrado.");
-        return false;
+    }
+
+    public List<ItemDeVenda> getCarrinho() {
+        return new ArrayList<>(carrinho);
+    }
+
+    public double getTotalCarrinho() {
+        return carrinho.stream().mapToDouble(ItemDeVenda::getSubtotal).sum();
+    }
+
+    public void finalizarVenda(Cliente cliente) {
+        if (carrinho.isEmpty()) return;
+
+        Venda venda = new Venda(vendas.size() + 1, cliente);
+        for (ItemDeVenda item : carrinho) {
+            venda.adicionarItem(item);
+        }
+        vendas.add(venda);
+        carrinho.clear();
+    }
+
+    public void limparCarrinho() {
+        carrinho.clear();
     }
 
     // Consultar estoque

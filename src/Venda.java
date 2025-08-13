@@ -1,38 +1,42 @@
 import java.util.Date;
+import java.util.List;
+import java.util.ArrayList;
 
 public class Venda {
     private int id;
     private Cliente cliente;
     private Date data;
-    private double valorTotal;
+    private List<ItemDeVenda> itens;
 
-    public Venda(int id, Cliente cliente, double valorTotal) {
+    public Venda(int id, Cliente cliente) {
         this.id = id;
         this.cliente = cliente;
         this.data = new Date();
-        this.valorTotal = valorTotal;
+        this.itens = new ArrayList<>();
     }
 
-    // Getters e Setters
+    public void adicionarItem(ItemDeVenda item) {
+        itens.add(item);
+    }
+
+    public double calcularTotal() {
+        return itens.stream()
+                    .mapToDouble(ItemDeVenda::getSubtotal)
+                    .sum();
+    }
+
+    // Getters
     public int getId() { return id; }
-    public void setId(int id) { this.id = id; }
-
     public Cliente getCliente() { return cliente; }
-    public void setCliente(Cliente cliente) { this.cliente = cliente; }
-
     public Date getData() { return data; }
-    public void setData(Date data) { this.data = data; }
-
-    public double getValorTotal() { return valorTotal; }
-    public void setValorTotal(double valorTotal) { this.valorTotal = valorTotal; }
+    public List<ItemDeVenda> getItens() { return itens; }
 
     @Override
     public String toString() {
         return "Venda{" +
                 "id=" + id +
                 ", cliente=" + cliente.getNome() +
-                ", data=" + data +
-                ", total=R$ " + valorTotal +
+                ", total=R$ " + String.format("%.2f", calcularTotal()) +
                 '}';
     }
 }

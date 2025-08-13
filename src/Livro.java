@@ -41,14 +41,17 @@ public class Livro {
     public void setQuantidadeEstoque(int quantidadeEstoque) { this.quantidadeEstoque = quantidadeEstoque; }
 
     @Override
-    public String toString() {
-        return "Livro{" +
-                "id=" + id +
-                ", titulo='" + titulo + '\'' +
-                ", autor='" + autor + '\'' +
-                ", estoque=" + quantidadeEstoque +
-                ", preço venda=" + precoVenda +
-                '}';
+public String toString() {
+    return titulo + " (" + autor + ")"; // Melhor para exibir em listas
+}
+
+// Método para reduzir estoque com segurança
+public boolean reduzirEstoque(int quantidade) {
+    if (quantidade <= quantidadeEstoque) {
+        quantidadeEstoque -= quantidade;
+        return true;
     }
+    return false;
+}
 }
 
