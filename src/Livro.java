@@ -1,5 +1,6 @@
 public class Livro {
     private int id;
+    private String isbn;
     private String titulo;
     private String autor;
     private String categoria;
@@ -7,9 +8,10 @@ public class Livro {
     private double precoVenda;
     private int quantidadeEstoque;
 
-    public Livro(int id, String titulo, String autor, String categoria,
+    public Livro(int id, String isbn,String titulo, String autor, String categoria,
                  double precoCusto, double precoVenda, int quantidadeEstoque) {
         this.id = id;
+        this.isbn = isbn;
         this.titulo = titulo;
         this.autor = autor;
         this.categoria = categoria;
@@ -18,7 +20,13 @@ public class Livro {
         this.quantidadeEstoque = quantidadeEstoque;
     }
 
+    
+
     // Getters e Setters
+    
+    public void setIsbn(String isbn) { this.isbn = isbn; }
+    public String getIsbn() {  return isbn; }
+    
     public int getId() { return id; }
     public void setId(int id) { this.id = id; }
 

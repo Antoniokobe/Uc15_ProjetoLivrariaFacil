@@ -236,7 +236,7 @@ public class CadastroLivro extends javax.swing.JFrame {
             double precoVenda = Double.parseDouble(txtPrecoVenda.getText());
             int quantidade = Integer.parseInt(txtQuantidade.getText());
 
-            Livro livro = new Livro(id, titulo, autor, categoria, precoCusto, precoVenda, quantidade);
+            Livro livro = new Livro(id ,isbn, titulo, autor, categoria, precoCusto, precoVenda, quantidade);
             App.sistema.cadastrarLivro(livro);
 
             JOptionPane.showMessageDialog(this, "Livro cadastrado com sucesso!");
@@ -250,8 +250,9 @@ public class CadastroLivro extends javax.swing.JFrame {
     }//GEN-LAST:event_btnSalvarActionPerformed
 
     private void btnVendaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnVendaActionPerformed
-        new RealizarVenda().setVisible(true);
-            dispose();
+          
+        new CadastroCliente().setVisible(true);
+        dispose();
     }//GEN-LAST:event_btnVendaActionPerformed
 
     private void limparCampos() {

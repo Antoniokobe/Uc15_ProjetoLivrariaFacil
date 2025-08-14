@@ -74,7 +74,7 @@ public class RealizarVenda extends javax.swing.JFrame {
     modelCarrinho.setRowCount(0);
     for (ItemDeVenda item : carrinho) {
         Object[] row = {
-            item.getLivro().getId(),
+            item.getLivro().getIsbn(),
             item.getLivro().getTitulo(),
             item.getLivro().getAutor(),
             item.getLivro().getCategoria(),
@@ -368,14 +368,44 @@ public class RealizarVenda extends javax.swing.JFrame {
     }//GEN-LAST:event_txtIdActionPerformed
 
     private void btnFinalizarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnFinalizarActionPerformed
-        int selectedRow = tblClientes.getSelectedRow();
+     int selectedRow = tblClientes.getSelectedRow();
+
+    // Se nenhum cliente for selecionado
     if (selectedRow < 0) {
-        JOptionPane.showMessageDialog(this, "Selecione um cliente para finalizar a venda.", "Erro", JOptionPane.ERROR_MESSAGE);
+        int opcao = JOptionPane.showConfirmDialog(
+            this,
+            "Nenhum cliente selecionado. Deseja cadastrar um novo cliente?",
+            "Cliente não selecionado",
+            JOptionPane.YES_NO_OPTION,
+            JOptionPane.QUESTION_MESSAGE
+        );
+
+        if (opcao == JOptionPane.YES_OPTION) {
+            new CadastroCliente().setVisible(true);
+            this.dispose();
+        } else {
+            int sair = JOptionPane.showConfirmDialog(
+                this,
+                "Deseja voltar ao menu principal?",
+                "Voltar",
+                JOptionPane.YES_NO_OPTION
+            );
+            if (sair == JOptionPane.YES_OPTION) {
+                new TelaInicial().setVisible(true);
+                this.dispose();
+            }
+        }
         return;
     }
 
+    // Verifica se o carrinho está vazio
     if (carrinho.isEmpty()) {
-        JOptionPane.showMessageDialog(this, "O carrinho está vazio. Adicione itens antes de finalizar.", "Erro", JOptionPane.ERROR_MESSAGE);
+        JOptionPane.showMessageDialog(
+            this,
+            "O carrinho está vazio. Adicione itens antes de finalizar.",
+            "Erro",
+            JOptionPane.ERROR_MESSAGE
+        );
         return;
     }
 
@@ -389,18 +419,32 @@ public class RealizarVenda extends javax.swing.JFrame {
         }
     }
 
-    // Finalizar venda
-    sistema.finalizarVenda(cliente, new ArrayList<>(carrinho)); // Supondo que você tenha esse método
+    if (cliente == null) {
+        JOptionPane.showMessageDialog(this, "Cliente inválido.", "Erro", JOptionPane.ERROR_MESSAGE);
+        return;
+    }
+
+    //Finalizar venda
+    sistema.finalizarVenda(cliente, new ArrayList<>(carrinho));
+
+    //Calcular total
     double total = carrinho.stream().mapToDouble(ItemDeVenda::getSubtotal).sum();
-    JOptionPane.showMessageDialog(this, 
-    "Venda finalizada com sucesso!\n" +
-    "Cliente: " + cliente.getNome() + "\n" +
-    "Total: R$ " + String.format("%.2f", total),
-    "Sucesso", JOptionPane.INFORMATION_MESSAGE);
+
+    //Mensagem de sucesso
+    JOptionPane.showMessageDialog(
+        this,
+        "Venda realizada com sucesso!\n\n" +
+        "Cliente: " + cliente.getNome() + "\n" +
+        "Total: R$ " + String.format("%.2f", total),
+        "Sucesso",
+        JOptionPane.INFORMATION_MESSAGE
+    );
 
     // Voltar ao menu
     new TelaInicial().setVisible(true);
     this.dispose();
+
+    
     }//GEN-LAST:event_btnFinalizarActionPerformed
 
     private void btnRemoverActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnRemoverActionPerformed
@@ -419,23 +463,57 @@ public class RealizarVenda extends javax.swing.JFrame {
     }//GEN-LAST:event_txtSubTotalActionPerformed
 
     private void txtQuantidadeActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtQuantidadeActionPerformed
-       atualizarSubtotal();
-       
-       // Atualizar quantidade no carrinho
-    int row = tblCarrinho.getSelectedRow();
-    if (row >= 0 && livroSelecionadoParaEdicao != null) {
-        try {
-            int novaQtd = Integer.parseInt(txtQuantidade.getText());
-            ItemDeVenda item = carrinho.get(row);
-            item = new ItemDeVenda(livroSelecionadoParaEdicao, novaQtd); // Novo item com nova quantidade
-            carrinho.set(row, item);
-            atualizarCarrinho(); // Atualiza a tabela
-        } catch (Exception e) {
-            // Ignora erro de parse já tratado
+ int row = tblCarrinho.getSelectedRow();
+    if (row < 0) {
+        txtSubTotal.setText("0,00");
+        return;
+    }
+
+    // Obter o ISBN da linha selecionada
+    Object isbnObj = modelCarrinho.getValueAt(row, 0);
+    if (isbnObj == null) {
+        txtSubTotal.setText("0,00");
+        return;
+    }
+
+    String isbn = isbnObj.toString().trim();
+
+    // Buscar o livro real no sistema
+    Livro livro = null;
+    for (Livro l : App.sistema.getLivros()) {
+        if (l.getIsbn().equals(isbn)) {
+            livro = l;
+            break;
         }
     }
-       
-       
+
+    if (livro == null) {
+        JOptionPane.showMessageDialog(this, "Livro não encontrado.", "Erro", JOptionPane.ERROR_MESSAGE);
+        txtSubTotal.setText("0,00");
+        return;
+    }
+
+    // Atualizar quantidade no carrinho
+    try {
+        int quantidade = Integer.parseInt(txtQuantidade.getText().trim());
+        if (quantidade <= 0) throw new NumberFormatException();
+
+        // Atualiza o item no carrinho
+        ItemDeVenda item = new ItemDeVenda(livro, quantidade);
+        carrinho.set(row, item);
+
+        // Recalcula subtotal
+        double subtotal = quantidade * livro.getPrecoVenda();
+        txtSubTotal.setText(String.format("%.2f", subtotal).replace('.', ','));
+
+        // Atualiza a tabela
+        atualizarCarrinho();
+
+    } catch (NumberFormatException e) {
+        JOptionPane.showMessageDialog(this, "Digite uma quantidade válida.", "Erro", JOptionPane.ERROR_MESSAGE);
+        txtQuantidade.setText("1");
+        txtQuantidadeActionPerformed(evt); // Recalcula
+    }
     }//GEN-LAST:event_txtQuantidadeActionPerformed
 
     private void atualizarSubtotal() {
@@ -464,10 +542,10 @@ public class RealizarVenda extends javax.swing.JFrame {
     } catch (NumberFormatException e) {
         JOptionPane.showMessageDialog(this, "Digite um número válido para a quantidade.", "Erro", JOptionPane.ERROR_MESSAGE);
         txtQuantidade.setText("1");
+        atualizarSubtotal();
     }
 }
-    
-    
+       
     
     private void btnCancelarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnCancelarActionPerformed
         int confirm = JOptionPane.showConfirmDialog(this, "Tem certeza que deseja cancelar a venda?", "Cancelar Venda", JOptionPane.YES_NO_OPTION);
@@ -489,16 +567,24 @@ public class RealizarVenda extends javax.swing.JFrame {
         Object isbnObj = modelCarrinho.getValueAt(row, 0);
         if (isbnObj == null) return;
 
-        int id = Integer.parseInt(isbnObj.toString());
+        String isbn = isbnObj.toString().trim();
 
-        // Buscar o livro na lista de livros
+        // Buscar o livro na lista de livros usando o ISBN
         livroSelecionadoParaEdicao = null;
         for (Livro livro : App.sistema.getLivros()) {
-            if (livro.getId() == id) {
-                livroSelecionadoParaEdicao = livro;
-                break;
+        if (isbn.equals(livro.getIsbn())) { // ✅ Compara por ISBN (String)
+        livroSelecionadoParaEdicao = livro;
+        break;
             }
         }
+        
+        if (livroSelecionadoParaEdicao == null) {
+        JOptionPane.showMessageDialog(this, "Livro não encontrado no sistema.", "Erro", JOptionPane.ERROR_MESSAGE);
+        txtQuantidade.setText("1");
+        txtSubTotal.setText("0,00");
+        return;
+        }
+     
 
         // Preencher quantidade atual
         int quantidade = (int) modelCarrinho.getValueAt(row, 6); // coluna "Quantidade"
@@ -556,8 +642,9 @@ public class RealizarVenda extends javax.swing.JFrame {
     btnCancelar.setFocusTraversalKeysEnabled(true);
 
     // Foco inicial
-    txtId.requestFocus();
-}
+     txtId.requestFocus();
+    }
+    
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btnAdicionar;
