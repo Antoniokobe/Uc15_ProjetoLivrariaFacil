@@ -1,5 +1,6 @@
 import java.util.ArrayList;
 import java.util.List;
+import javax.swing.JOptionPane;
 
 public class LivrariaController {
     private List<Livro> livros;
@@ -45,15 +46,27 @@ public class LivrariaController {
         return carrinho.stream().mapToDouble(ItemDeVenda::getSubtotal).sum();
     }
 
-    public void finalizarVenda(Cliente cliente) {
-        if (carrinho.isEmpty()) return;
+    // Método modificado para aceitar Cliente e itens do carrinho
+    public void finalizarVenda(Cliente cliente, List<ItemDeVenda> itensCarrinho) {
+        if (itensCarrinho.isEmpty()) return;
 
-        Venda venda = new Venda(vendas.size() + 1, cliente);
-        for (ItemDeVenda item : carrinho) {
+        // Cria uma nova venda com ID incrementado
+        int novoId = vendas.size() + 1;
+        Venda venda = new Venda(novoId, cliente);
+
+        // Adiciona cada item do carrinho à venda
+        for (ItemDeVenda item : itensCarrinho) {
             venda.adicionarItem(item);
         }
+
+        // Salva a venda no sistema
         vendas.add(venda);
+
+        // Limpa o carrinho temporário
         carrinho.clear();
+
+        // Exibe mensagem de sucesso
+        JOptionPane.showMessageDialog(null, "Venda realizada com sucesso!", "Sucesso", JOptionPane.INFORMATION_MESSAGE);
     }
 
     public void limparCarrinho() {

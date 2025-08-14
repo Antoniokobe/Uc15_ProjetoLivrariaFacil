@@ -4,7 +4,13 @@
     <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/2">
         <group>
             <file>file:/C:/Users/Antonio/Documents/NetBeansProjects/LivrariaFacil/src/Main.java</file>
-            <file>file:/C:/Users/Antonio/Documents/NetBeansProjects/LivrariaFacil/src/Cliente.java</file>
+            <file>file:/C:/Users/Antonio/Documents/NetBeansProjects/LivrariaFacil/src/CadastroLivro.java</file>
+            <file>file:/C:/Users/Antonio/Documents/NetBeansProjects/LivrariaFacil/src/CadastroCliente.java</file>
+            <file>file:/C:/Users/Antonio/Documents/NetBeansProjects/LivrariaFacil/src/TelaInicial.java</file>
+            <file>file:/C:/Users/Antonio/Documents/NetBeansProjects/LivrariaFacil/src/Livro.java</file>
+            <file>file:/C:/Users/Antonio/Documents/NetBeansProjects/LivrariaFacil/src/LivrariaController.java</file>
+            <file>file:/C:/Users/Antonio/Documents/NetBeansProjects/LivrariaFacil/src/RealizarVenda.java</file>
+            <file>file:/C:/Users/Antonio/Documents/NetBeansProjects/LivrariaFacil/src/ConsultarEstoque.java</file>
         </group>
     </open-files>
 </project-private>
