@@ -4,6 +4,8 @@ package br.com.livrariafacil.view;
 import br.com.livrariafacil.app.App;
 import br.com.livrariafacil.model.Livro;
 import br.com.livrariafacil.model.ItemDeVenda;
+import java.util.List;
+import javax.swing.JOptionPane;
 import javax.swing.table.DefaultTableModel;
 
 public class ConsultarEstoque extends javax.swing.JFrame {
@@ -16,6 +18,7 @@ private java.util.List<ItemDeVenda> carrinho;
         carrinho = new java.util.ArrayList<>();
         model = (DefaultTableModel) tblLivrosDisponiveis.getModel();
         carregarLivros();
+                
         
     }
     
@@ -219,14 +222,13 @@ private java.util.List<ItemDeVenda> carrinho;
     }//GEN-LAST:event_txtIdActionPerformed
 
     private void btnAdicionarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnAdicionarActionPerformed
-        
-    int selectedRow = tblLivrosDisponiveis.getSelectedRow();
+      int selectedRow = tblLivrosDisponiveis.getSelectedRow();
     if (selectedRow < 0) {
-        javax.swing.JOptionPane.showMessageDialog(this, "Selecione um livro para adicionar ao carrinho.", "Aviso", javax.swing.JOptionPane.WARNING_MESSAGE);
+        JOptionPane.showMessageDialog(this, "Selecione um livro para adicionar ao carrinho.", "Aviso", JOptionPane.WARNING_MESSAGE);
         return;
     }
 
-    // Obter dados da linha selecionada
+    // Obter ID da linha selecionada
     int id = (int) model.getValueAt(selectedRow, 0);
     Livro livro = null;
 
@@ -238,31 +240,29 @@ private java.util.List<ItemDeVenda> carrinho;
     }
 
     if (livro == null) {
-        javax.swing.JOptionPane.showMessageDialog(this, "Livro não encontrado.", "Erro", javax.swing.JOptionPane.ERROR_MESSAGE);
+        JOptionPane.showMessageDialog(this, "Livro não encontrado.", "Erro", JOptionPane.ERROR_MESSAGE);
         return;
     }
 
     if (livro.getQuantidadeEstoque() <= 0) {
-        javax.swing.JOptionPane.showMessageDialog(this, "Estoque insuficiente para: " + livro.getTitulo(), "Erro", javax.swing.JOptionPane.ERROR_MESSAGE);
+        JOptionPane.showMessageDialog(this, "Estoque insuficiente para: " + livro.getTitulo(), "Erro", JOptionPane.ERROR_MESSAGE);
         return;
     }
 
-    // Adiciona ao carrinho temporário
+    // Adiciona ao carrinho
     ItemDeVenda item = new ItemDeVenda(livro, 1);
     carrinho.add(item);
 
-    // Atualiza o estoque visualmente (opcional)
+    // Atualiza estoque visualmente
     int novaQuantidade = livro.getQuantidadeEstoque() - 1;
     model.setValueAt(novaQuantidade, selectedRow, 6);
 
     // Confirmação
-    javax.swing.JOptionPane.showMessageDialog(this, "Livro adicionado ao carrinho: " + livro.getTitulo());
+    JOptionPane.showMessageDialog(this, "Livro adicionado ao carrinho: " + livro.getTitulo());
 
-    // Opcional: abrir a tela de venda
-     new RealizarVenda(carrinho).setVisible(true);
-    // dispose();
-        
-        
+    // Abre a tela de venda com o carrinho
+    new RealizarVenda(carrinho).setVisible(true);
+    dispose(); // Fecha Consulta Estoque
     }//GEN-LAST:event_btnAdicionarActionPerformed
 
     private void txtIdFocusGained(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_txtIdFocusGained
@@ -302,8 +302,14 @@ private java.util.List<ItemDeVenda> carrinho;
                 new ConsultarEstoque().setVisible(true);
             }
         });
+      
     }
-
+    
+    public ConsultarEstoque(List<ItemDeVenda> carrinho) {
+    this();
+    this.carrinho = carrinho;
+    }
+    
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btnAdicionar;
     private javax.swing.JLabel jLabel1;
