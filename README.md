@@ -1,10 +1,6 @@
-# 📚 Livraria Fácil
+# Livraria Fácil
 
-> Sistema de gestão para pequenas livrarias desenvolvido em Java com interface gráfica e banco de dados.
-
-![Java](https://img.shields.io/badge/Java-ED8B00?style=for-the-badge&logo=openjdk&logoColor=white)
-![MySQL](https://img.shields.io/badge/MySQL-005C8A?style=for-the-badge&logo=mysql&logoColor=white)
-![Swing](https://img.shields.io/badge/Swing-000000?style=for-the-badge&logo=java&logoColor=white)
+ Sistema de gestão para pequenas livrarias desenvolvido em Java com interface gráfica e banco de dados.
 
 ---
 
@@ -58,5 +54,3 @@ Ideal para livrarias que desejam substituir planilhas ou sistemas manuais por um
   - Máscaras em CPF e telefone
 
 ---
-
-## 📁 Estrutura do Projeto
