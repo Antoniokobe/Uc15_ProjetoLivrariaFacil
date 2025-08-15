@@ -1,3 +1,5 @@
+package br.com.livrariafacil.model;
+
 public class Cliente {
     private int id;
     private String nome;
@@ -31,10 +33,6 @@ public class Cliente {
 
     @Override
     public String toString() {
-        return "Cliente{" +
-                "id=" + id +
-                ", nome='" + nome + '\'' +
-                ", cpf='" + cpf + '\'' +
-                '}';
+        return nome + " (" + cpf + ")";
     }
 }
